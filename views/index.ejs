@@ -4,24 +4,52 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
-    <title>QR Code Display</title>
+    <link rel="icon" href="/qr-code.png" type="image/png" />
+    <title>QR Code Generator</title>
   </head>
   <body>
-    <form action="/" method="post">
-      <h2>Enter URL</h2>
-      <input
-        type="text"
-        name="item"
-        placeholder="website.com"
-        autocomplete="off"
-        required
-      />
-      <button type="submit">Generate QR Code</button>
-    </form>
+    <div
+      style="
+        padding-top: 20px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+      "
+    >
+      <h1
+        style="
+          justify-content: center;
+          align-items: center;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        QR CODE GENERATOR
+      </h1>
+      <h3>generate QR codes effortlessly!</h3>
+    </div>
 
-    <% if (qrImageUrl) { %>
-    <h2>Generated QR Code:</h2>
-    <img src="<%= qrImageUrl %>" alt="QR Code" />
-    <% } %>
+    <div class="container">
+      <% if (qrImageUrl) { %>
+      <h2>Generated QR Code:</h2>
+      <img src="<%= qrImageUrl %>" alt="QR Code" width="300" height="300" />
+      <% } %>
+      <h2>Enter URL</h2>
+      <form action="/" method="post" class="form">
+        <input
+          class="input"
+          type="text"
+          name="item"
+          placeholder="website.com"
+          autocomplete="off"
+          required
+        />
+        <button type="submit" class="form-submit">Generate QR Code</button>
+      </form>
+    </div>
   </body>
+  <footer style="display: flex; justify-content: center; padding-top: 100px">
+    Developed By gouri-shankar
+  </footer>
 </html>
