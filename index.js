@@ -1,24 +1,36 @@
-import inquirer from "inquirer";
+import express from "express";
 import qr from "qr-image";
 import fs from "fs";
+import bodyParser from "body-parser";
 
-inquirer
-  .prompt([
-    { message: "Type URL : ", name: "URL" },
-    {
-      message: "Type QRCodeName (google,fb,youtube,etc) : ",
-      name: "qrCodeName",
-    },
-  ])
-  .then((answers) => {
-    let url = answers.URL;
-    var qr_svg = qr.image(url);
-    qr_svg.pipe(fs.createWriteStream(`${answers.qrCodeName}_qrImg.png`));
-  })
-  .catch((error) => {
-    if (error.isTtyError) {
-      console.log("Prompt couldn't be rendered in the current environment");
-    } else {
-      console.log("Something went wrong");
-    }
-  });
+const app = express();
+const port = 3000;
+
+// Middleware to serve static files from 'public' directory
+app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.set("view engine", "ejs");
+
+// Serve the form page
+app.get("/", (req, res) => {
+  res.render("index", { qrImageUrl: null });
+});
+
+// Handle form submission
+app.post("/", (req, res) => {
+  const url = req.body.item;
+  const qrCodeName = "qrCode"; // Default name or you can customize it
+  const filePath = `public/${qrCodeName}_qrImg.png`;
+
+  // Generate QR code
+  const qr_svg = qr.image(url, { type: "png" });
+  qr_svg.pipe(fs.createWriteStream(filePath));
+
+  // Send the file path to the EJS template
+  const qrImageUrl = `/${qrCodeName}_qrImg.png`;
+  res.render("index", { qrImageUrl });
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});

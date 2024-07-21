@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>QR Code Display</title>
+  </head>
+  <body>
+    <form action="/" method="post">
+        <h2>Enter URL</h2>
+        <input  type="text" name="item" placeholder="website.com" autocomplete="off"/>
+        <button  type="submit" name="button" >Generate QR Code</button>
+      </form>
+    </div>
+  </body>
+</html>
+________________________
+
+import inquirer from "inquirer";
+import qr from "qr-image";
+import fs from "fs";
+
+import express from "express";
+import bodyParser from "body-parser";
+import axios from "axios";
+
+const app = express();
+const port = 3000;
+
+app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.set("view engine", "ejs");
+
+app.get("/", (req, res) => {
+  res.render("index");
+});
+
+app.post("/", (req, res) => {
+  let itmData = req.body.item;
+
+  console.log(itmData);
+  res.redirect("/");
+});
+
+inquirer
+  .prompt([
+    { message: "Type URL : ", name: "URL" },
+    {
+      message: "Type QRCodeName (google,fb,youtube,etc) : ",
+      name: "qrCodeName",
+    },
+  ])
+  .then((answers) => {
+    let url = answers.URL;
+    var qr_svg = qr.image(url);
+    qr_svg.pipe(fs.createWriteStream(`${answers.qrCodeName}_qrImg.png`));
+  })
+  .catch((error) => {
+    if (error.isTtyError) {
+      console.log("Prompt couldn't be rendered in the current environment");
+    } else {
+      console.log("Something went wrong");
+    }
+  });
+
+app.listen(port, () => {
+  console.log("Server has started");
+});
+
+
+
+
